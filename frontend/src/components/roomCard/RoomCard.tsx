@@ -3,12 +3,12 @@ import {IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonC
 import {Link} from "react-router-dom";
 import {card} from "../../types";
 
-function RoomCard({id, title, desription}:card) {
+function RoomCard({id, name, description}:card) {
     return (
         <IonCard>
             <IonCardHeader>
-                <IonCardTitle>{title}</IonCardTitle>
-                <IonCardSubtitle>{desription}</IonCardSubtitle>
+                <IonCardTitle>{name}</IonCardTitle>
+                <IonCardSubtitle>{description}</IonCardSubtitle>
             </IonCardHeader>
             <IonCardContent>
                 <Link to={"/room/"+id}><IonButton>Connect</IonButton></Link>

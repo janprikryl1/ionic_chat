@@ -1,7 +1,7 @@
 export type card = {
     id: number;
-    title: string;
-    desription: string;
+    name: string;
+    description: string;
 }
 
 export type message = {

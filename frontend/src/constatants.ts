@@ -1,0 +1,1 @@
+export const apiUrl = "wss://localhost:7207/roomHub";

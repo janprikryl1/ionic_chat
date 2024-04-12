@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState} from "react";
 import {
-    InputChangeEventDetail,
+    InputChangeEventDetail, IonButton,
     IonContent,
     IonHeader,
     IonInput,
@@ -11,11 +11,11 @@ import {
 } from "@ionic/react";
 import {card} from "../types";
 import RoomCard from "../components/roomCard/RoomCard";
+import {useConnectionContext} from "../ConnectionProvider";
 
-function Dashboard () {
-    const [rooms, setRooms] = useState<card[]>([{id:1, title:"a", desription:"b"}]);
+function Dashboard({ name, setName }: { name: string, setName: (newName: string) => void }) {
+    const {rooms} = useConnectionContext();
 
-    const [name, setName] = useState("");
     const handleNameChange = (e:CustomEvent<InputChangeEventDetail>) => {
         if (typeof e.detail.value === "string") {
             setName(e.detail.value);
@@ -34,10 +34,11 @@ function Dashboard () {
                     <IonInput label="Your name" value={name} onIonChange={handleNameChange}></IonInput>
                 </IonItem>
 
-                {name !== "" ? rooms?.map((room) => (
-                    <RoomCard id={room.id} title={room.title} desription={room.desription} key={room.id}/>
-                )) : null}
+                {rooms?.map((room: card, index) => (
+                    <RoomCard id={room.id} name={room.name} description={room.description} key={index}/>
+                ))}
 
+                <IonButton disabled>Create room</IonButton>
             </IonContent>
         </IonPage>
     )

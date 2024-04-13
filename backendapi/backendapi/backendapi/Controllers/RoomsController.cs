@@ -46,7 +46,7 @@ namespace backendapi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoom(long id, Room room)
         {
-            if (id != room.Id)
+            if (id != room.id)
             {
                 return BadRequest();
             }
@@ -80,7 +80,7 @@ namespace backendapi.Controllers
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRoom", new { id = room.Id }, room);
+            return CreatedAtAction("GetRoom", new { id = room.id }, room);
         }
 
         // DELETE: api/Rooms/5
@@ -101,7 +101,7 @@ namespace backendapi.Controllers
 
         private bool RoomExists(long id)
         {
-            return _context.Rooms.Any(e => e.Id == id);
+            return _context.Rooms.Any(e => e.id == id);
         }
     }
 }

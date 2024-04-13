@@ -27,43 +27,17 @@ export const useSignalR = () => {
                 .start()
                 .then(() => {
                     void connection.send('LoadAllRooms');
-                    connection.on('AllRooms', (rooms: string) => {console.log(rooms)
+                    connection.on('AllRooms', (rooms: string) => {
                         const room_list = JSON.parse(rooms) as card[];
                         setRooms(room_list);
                         return;
                     });
-                    connection.on('OldMessages', (room: number, messages: string) => {console.log(messages)
-                        //toast.error("Room doesn't exists anymore");
-                        if (selectedRoom === room) {
-                            const message_list = JSON.parse(messages) as message[];
-                            setMessages(message_list);
-                            return;
-                        }
-                    });
 
-                    connection.on('New message', (message: string, author: string, room: number) => {
-                        if (selectedRoom == room) {
-                            const m: message = {author: author, text: message};
-                            setMessages([...messages, m]);
-                            return;
-                        }
-                    });
 
                     connection.on('RoomCreated', (roomId: number, title: string, description: string) => {
                         const room:card = {name: title, description: description, id:roomId};
-                        if (room && rooms?.length) {
-                            setRooms([...rooms, room]);
-                        } else {
-                            setRooms([room]);
-                        }
-
+                        setRooms(prevRooms => [...prevRooms, room]);
                     });
-
-                    connection.on('UserConeected', (nickname: string, roomId: number) => {
-                       const m: message = {author:'sys', text:'Připojil se nový uživatel '+nickname};
-                        setMessages([...messages, m]);
-                    });
-
                 })
                 .catch((error) => {
                     console.log(error);
@@ -71,6 +45,32 @@ export const useSignalR = () => {
                 });
         }
     }, [connection]);
+
+    useEffect(() => {
+        if (connection) {
+            connection.on('OldMessages', (room: number, messages: string) => {
+                if (selectedRoom === room) {
+                    const message_list = JSON.parse(messages);
+                    setMessages(message_list);
+                }
+            });
+
+            connection.on('New message', (author: string, text: string, room: number) => {
+                if (selectedRoom === room) {
+                    const message: message = {author:author, text:text};
+                    setMessages(prevMessages => [...prevMessages, message]);
+                    return;
+                }
+            });
+
+            connection.on('UserConeected', (nickname: string, roomId: number) => {
+                if (selectedRoom === roomId) {
+                    const m: message = {author:'sys', text:'Připojil se nový uživatel '+nickname};
+                    setMessages(prevMessages => [...prevMessages, m]);
+                }
+            });
+        }
+    }, [connection, selectedRoom]);
 
     return { connection, rooms, messages, selectedRoom, setSelectedRoom };
 };

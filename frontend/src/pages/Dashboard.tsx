@@ -12,6 +12,7 @@ import {
 import {card} from "../types";
 import RoomCard from "../components/roomCard/RoomCard";
 import {useConnectionContext} from "../ConnectionProvider";
+import {CreateRoomModal} from "../components/CreateRoomModal";
 
 function Dashboard({ name, setName }: { name: string, setName: (newName: string) => void }) {
     const {rooms} = useConnectionContext();
@@ -34,11 +35,16 @@ function Dashboard({ name, setName }: { name: string, setName: (newName: string)
                     <IonInput label="Your name" value={name} onIonChange={handleNameChange}></IonInput>
                 </IonItem>
 
-                {rooms?.map((room: card, index) => (
-                    <RoomCard id={room.id} name={room.name} description={room.description} key={index}/>
-                ))}
+                {name ? (
+                   <>
+                       {rooms?.map((room: card, index) => (
+                           <RoomCard id={room.id} name={room.name} description={room.description} key={index}/>
+                       ))}
 
-                <IonButton disabled>Create room</IonButton>
+                       <IonButton id="open-modal" expand="block">Create room</IonButton>
+                       <CreateRoomModal />
+                   </>
+                ) : null}
             </IonContent>
         </IonPage>
     )

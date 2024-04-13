@@ -1,5 +1,6 @@
 ﻿using backendapi.Models;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using NuGet.Protocol;
 using System;
 
@@ -16,39 +17,28 @@ public class RoomHub : Hub
 
     public async Task ConnectedNewUser(string nickname, long roomId)
     {
-        String info = $"Připojit se uživatel ${nickname}";
-        Message message = new Message("", info);
+        String info = "Připojit se uživatel "+nickname;
+        Message message = new Message("", info, roomId);
         dbContext.Add(message);
 
-        Room? room = dbContext.Rooms.FirstOrDefault(r => r.Id == roomId);
-        if (room != null)
-        {
-            room.Messages.Add(message);
-            dbContext.Update(room);
-        }
         await dbContext.SaveChangesAsync();
         await Clients.All.SendAsync("UserConeected", nickname, roomId);
     }
 
-    public async Task CreateRoom(string title, string description)
+    public async Task CreateRoom(string name, string description)
     {
-        Room room = new Room(title, description);
+        Room room = new Room(name, description);
         dbContext.Add(room);
         await dbContext.SaveChangesAsync();
-        await Clients.All.SendAsync("Room changed", room.Id, title, description);
+        await Clients.All.SendAsync("RoomCreated", room.id, name, description);
     }
 
     public async Task SendMessage(string messageText, string author, int roomId)
     {
-        Message message = new Message(author, messageText);
-        Room? room = dbContext.Rooms.FirstOrDefault(r => r.Id == roomId);
-        if (room != null)
-        {
-            room.Messages.Add(message);
-            dbContext.Update(room);
-        }
+        Message message = new Message(author, messageText, roomId);
+        dbContext.Add(message);
         await dbContext.SaveChangesAsync();
-        await Clients.All.SendAsync("New message", message, author, roomId);
+        await Clients.All.SendAsync("New message", author, messageText, roomId);
     }
 
     public async Task LoadAllRooms()
@@ -59,8 +49,7 @@ public class RoomHub : Hub
 
     public async Task LoadOldMessages(long roomId)
     {
-        Room room = dbContext.Rooms.FirstOrDefault(r => r.Id == roomId);
-        List<Message> messages = room.Messages.ToList();
-        await Clients.Caller.SendAsync("OldMessages", room, messages.ToJson());
+        List<Message> messages = dbContext.Messages.Where(m => m.roomId == roomId).ToList();
+        await Clients.Caller.SendAsync("OldMessages", roomId, JsonConvert.SerializeObject(messages));
     }
 }

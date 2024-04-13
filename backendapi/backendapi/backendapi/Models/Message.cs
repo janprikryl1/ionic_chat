@@ -2,15 +2,17 @@
 {
     public class Message
     {
-        public long Id { get; set; }
-        public string Author { get; set; }
-        public string Text { get; set; }
+        public long id { get; set; }
+        public long roomId { get; set; }
+        public string author { get; set; }
+        public string text { get; set; }
 
         public Message() { }
-        public Message(string author, string text)
+        public Message(string author, string text, long roomId)
         {
-            this.Author = author;
-            this.Text = text;
+            this.author = author;
+            this.text = text;
+            this.roomId = roomId;
         }
     }
 }

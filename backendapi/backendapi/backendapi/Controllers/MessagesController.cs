@@ -46,7 +46,7 @@ namespace backendapi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMessage(long id, Message message)
         {
-            if (id != message.Id)
+            if (id != message.id)
             {
                 return BadRequest();
             }
@@ -80,7 +80,7 @@ namespace backendapi.Controllers
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMessage", new { id = message.Id }, message);
+            return CreatedAtAction("GetMessage", new { id = message.id }, message);
         }
 
         // DELETE: api/Messages/5
@@ -101,7 +101,7 @@ namespace backendapi.Controllers
 
         private bool MessageExists(long id)
         {
-            return _context.Messages.Any(e => e.Id == id);
+            return _context.Messages.Any(e => e.id == id);
         }
     }
 }

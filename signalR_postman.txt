@@ -1,0 +1,12 @@
+1.) Připojit se na: wss://localhost:7207/roomHub
+2.) Odeslat:
+{
+  "protocol": "json",
+  "version": 1
+}
+3.) Odeslat:
+{
+  "arguments": ["jan"],
+  "target":"ConnectedNewUser",
+  "type": 1
+}

@@ -46,10 +46,10 @@ export const ConnectionProvider: FC<Props> = ({ children }) => {
         }
     }
 
-    const createRoom = async (title: string, description: string) => {
+    const createRoom = async (name: string, description: string) => {
         if (connection) {
             try {
-                void connection.send('CreateRoom', title, description);
+                void connection.send('CreateRoom', name, description);
             } catch (error) {
                 console.log(error);
                 toast.error("Error while creating room");
